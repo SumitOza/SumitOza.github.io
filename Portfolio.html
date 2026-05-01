@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sumit Oza — Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:      #060810;
+  --bg2:     #0c0f1a;
+  --surface: #10141f;
+  --card:    #131825;
+  --border:  #1e2535;
+  --border2: #2a3348;
+  --accent:  #f97316;
+  --accent2: #fb923c;
+  --blue:    #38bdf8;
+  --green:   #4ade80;
+  --muted:   #3d4d6b;
+  --text:    #dde4f5;
+  --dim:     #7585a8;
+  --mono:    'JetBrains Mono', monospace;
+  --serif:   'Fraunces', serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+#cur{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transition:transform .12s;}
+#cur-r{position:fixed;width:32px;height:32px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;opacity:.35;transition:transform .35s cubic-bezier(.25,.46,.45,.94);}
+
+/* SCANLINES */
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:500;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(6,8,16,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-id{font-size:.72rem;color:var(--accent);letter-spacing:.14em;}
+.nav-id span{color:var(--dim);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:.67rem;color:var(--dim);text-decoration:none;letter-spacing:.13em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);}
+.nav-dot{display:flex;align-items:center;gap:.45rem;font-size:.65rem;color:var(--green);}
+.nav-dot::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:7rem 2.5rem 3rem;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 65% 55% at 65% 38%,rgba(249,115,22,.07) 0%,transparent 70%),radial-gradient(ellipse 35% 40% at 15% 75%,rgba(56,189,248,.04) 0%,transparent 60%);}
+.term-bar{display:flex;align-items:center;gap:.45rem;margin-bottom:1.4rem;opacity:0;animation:up .5s .1s forwards;}
+.td{width:10px;height:10px;border-radius:50%;}
+.td:nth-child(1){background:#ff5f57;} .td:nth-child(2){background:#febc2e;} .td:nth-child(3){background:#28c840;}
+.term-label{font-size:.63rem;color:var(--muted);margin-left:.4rem;}
+.hero-cmd{font-size:.78rem;color:var(--dim);margin-bottom:.4rem;opacity:0;animation:up .5s .22s forwards;}
+.hero-cmd .p{color:var(--green);} .hero-cmd .c{color:var(--blue);}
+.hero-name{font-family:var(--serif);font-size:clamp(3.8rem,9vw,8rem);line-height:.92;letter-spacing:-.03em;margin:.9rem 0;opacity:0;animation:up .7s .36s forwards;}
+.hero-name em{font-style:italic;color:var(--accent);}
+.hero-role{font-size:clamp(.82rem,1.6vw,1rem);color:var(--dim);margin-bottom:.4rem;opacity:0;animation:up .6s .5s forwards;}
+.hero-role strong{color:var(--text);}
+.hero-summary{max-width:600px;font-size:.8rem;line-height:1.95;color:var(--dim);margin-top:1rem;opacity:0;animation:up .7s .62s forwards;}
+.hero-summary strong{color:var(--accent);}
+.hero-cta{display:flex;gap:.85rem;flex-wrap:wrap;margin-top:1.8rem;opacity:0;animation:up .7s .76s forwards;}
+.btn{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem 1.4rem;font-family:var(--mono);font-size:.73rem;letter-spacing:.08em;text-decoration:none;border-radius:3px;transition:all .2s;cursor:none;}
+.btn-p{background:var(--accent);color:#060810;font-weight:700;}
+.btn-p:hover{background:var(--accent2);transform:translateY(-2px);}
+.btn-g{border:1px solid var(--border2);color:var(--dim);}
+.btn-g:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+.hero-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.8rem;opacity:0;animation:up .7s .9s forwards;}
+.chip{font-size:.62rem;padding:.28rem .7rem;border:1px solid var(--border2);color:var(--muted);border-radius:2px;letter-spacing:.07em;}
+
+/* SECTIONS */
+.sect{padding:5rem 2.5rem;max-width:1160px;margin:0 auto;}
+.s-lbl{font-size:.63rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.55rem;}
+.s-title{font-family:var(--serif);font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.08;margin-bottom:2.4rem;}
+.s-title em{font-style:italic;color:var(--accent);}
+hr.div{border:none;border-top:1px solid var(--border);max-width:1160px;margin:0 auto;}
+
+/* STACK */
+.stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1px;background:var(--border);}
+.sk-card{background:var(--card);padding:1.6rem;transition:background .25s;position:relative;overflow:hidden;}
+.sk-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.sk-card:hover{background:var(--surface);}
+.sk-card:hover::before{transform:scaleX(1);}
+.sk-icon{font-size:1.4rem;margin-bottom:.85rem;}
+.sk-lbl{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem;}
+.sk-desc{font-size:.73rem;color:var(--dim);line-height:1.7;margin-bottom:.9rem;}
+.sk-tags{display:flex;flex-wrap:wrap;gap:.3rem;}
+.sk-tag{font-size:.6rem;padding:.18rem .5rem;border:1px solid var(--border2);color:var(--dim);border-radius:2px;}
+
+/* PROJECTS */
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:760px){.proj-grid{grid-template-columns:1fr;}}
+.pc{background:var(--card);border:1px solid var(--border);border-radius:3px;display:flex;flex-direction:column;overflow:hidden;transition:border-color .3s,transform .3s;}
+.pc:hover{border-color:var(--accent);transform:translateY(-4px);}
+.pc-top{padding:1.6rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+.pc-badge{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:.28rem .65rem;border:1px solid var(--accent);color:var(--accent);border-radius:2px;white-space:nowrap;flex-shrink:0;}
+.pc-title{font-family:var(--serif);font-size:1.45rem;line-height:1.15;margin-bottom:.3rem;}
+.pc-stack{font-size:.66rem;color:var(--blue);letter-spacing:.06em;}
+.pc-body{padding:1.6rem;flex:1;}
+.pc-desc{font-size:.76rem;color:var(--dim);line-height:1.85;margin-bottom:1.15rem;}
+.pc-list{list-style:none;display:flex;flex-direction:column;gap:.48rem;}
+.pc-list li{font-size:.7rem;color:var(--dim);padding-left:1.1rem;position:relative;line-height:1.65;}
+.pc-list li::before{content:'>';position:absolute;left:0;color:var(--accent);}
+.pc-list li strong{color:var(--text);}
+.arch{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:1.4rem;margin-top:1.2rem;}
+.arch-lbl{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.85rem;}
+.arch-flow{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;}
+.arch-node{padding:.35rem .8rem;border:1px solid var(--border2);color:var(--dim);border-radius:2px;font-size:.65rem;transition:all .2s;}
+.arch-node:hover{border-color:var(--accent);color:var(--accent);}
+.arch-arr{color:var(--muted);font-size:.75rem;}
+.pc-foot{padding:1.1rem 1.6rem;border-top:1px solid var(--border);display:flex;gap:.65rem;flex-wrap:wrap;}
+.pc-full{grid-column:1/-1;}
+
+/* WHY ME */
+.why-card{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:1.8rem;margin-bottom:.9rem;display:flex;gap:1.4rem;align-items:flex-start;transition:border-color .2s;}
+.why-card:hover{border-color:var(--accent);}
+.why-num{font-family:var(--serif);font-size:2.8rem;color:var(--border2);line-height:1;flex-shrink:0;width:44px;font-style:italic;transition:color .2s;}
+.why-card:hover .why-num{color:var(--accent);}
+.why-h{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:.35rem;}
+.why-sub{font-size:.68rem;color:var(--accent);margin-bottom:.6rem;letter-spacing:.05em;}
+.why-body{font-size:.73rem;color:var(--dim);line-height:1.85;}
+
+/* SKILLS TABLE */
+.sk-table{width:100%;border-collapse:collapse;}
+.sk-table td{border:1px solid var(--border);padding:.85rem 1.15rem;font-size:.73rem;vertical-align:top;line-height:1.75;}
+.sk-table .cat{color:var(--accent);font-weight:500;white-space:nowrap;width:28%;}
+.sk-table .vals{color:var(--dim);}
+
+/* CONTACT */
+.c-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem;}
+.c-card{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:1.35rem;display:flex;align-items:center;gap:.9rem;text-decoration:none;color:var(--text);transition:all .25s;}
+.c-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.c-ico{width:38px;height:38px;background:rgba(249,115,22,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.c-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.22rem;}
+.c-val{font-size:.78rem;font-weight:500;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:1.6rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.65rem;font-size:.65rem;color:var(--muted);}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s,transform .6s;}
+.reveal.vis{opacity:1;transform:none;}
+
+@keyframes up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+@media(max-width:640px){
+  nav{padding:.85rem 1.2rem;}
+  .nav-links{display:none;}
+  .sect{padding:3.5rem 1.2rem;}
+  .hero{padding:6rem 1.2rem 2.5rem;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-id"><span>~/</span>sumit-oza<span>.dev</span></div>
+  <ul class="nav-links">
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#why">Why Me</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-dot">open_to_work</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div style="position:relative;z-index:2;">
+    <div class="term-bar">
+      <div class="td"></div><div class="td"></div><div class="td"></div>
+      <span class="term-label">bash — sumit@portfolio ~ 80×24</span>
+    </div>
+    <p class="hero-cmd"><span class="p">sumit@dev:~$</span> <span class="c">cat whoami.txt</span></p>
+    <h1 class="hero-name">Sumit<br><em>Oza</em></h1>
+    <p class="hero-role"><strong>Backend Developer (Fresher)</strong> &nbsp;·&nbsp; AI Systems &nbsp;·&nbsp; API Design &nbsp;·&nbsp; Agentic Orchestration</p>
+    <p class="hero-summary">
+      AI-native backend engineer building <strong>production-grade systems</strong> — from multi-agent orchestration platforms
+      to Python voice-assistant backends. Expert in <strong>Python, FastAPI, LangGraph</strong>, and RAG pipelines.
+      I take a business problem from whiteboard all the way to a deployed, running container.
+      <strong>US timezone flexible. Immediate availability.</strong>
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-p">↓ &nbsp;View Projects</a>
+      <a href="https://github.com/SumitOza" target="_blank" class="btn btn-g">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://huggingface.co/SumitOza" target="_blank" class="btn btn-g">🤗 &nbsp;HuggingFace</a>
+      <a href="https://www.linkedin.com/in/sumit-oza-7956a92b5" target="_blank" class="btn btn-g">in &nbsp;LinkedIn</a>
+    </div>
+    <div class="hero-chips">
+      <span class="chip">Python · Expert</span>
+      <span class="chip">FastAPI</span>
+      <span class="chip">LangGraph</span>
+      <span class="chip">Docker</span>
+      <span class="chip">Pinecone Vector DB</span>
+      <span class="chip">REST APIs</span>
+      <span class="chip">PostgreSQL · MySQL · SQLite</span>
+      <span class="chip">RAG Pipelines</span>
+      <span class="chip">Pydantic</span>
+      <span class="chip">JavaScript / TypeScript</span>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- STACK -->
+<section class="sect" id="stack">
+  <p class="s-lbl reveal">Technical Arsenal</p>
+  <h2 class="s-title reveal">Backend <em>stack</em> &<br>capabilities</h2>
+  <div class="stack-grid reveal">
+    <div class="sk-card">
+      <div class="sk-icon">🐍</div>
+      <div class="sk-lbl">Core Language</div>
+      <p class="sk-desc">Expert-level Python — async I/O, type-safe Pydantic models, and modular production patterns.</p>
+      <div class="sk-tags"><span class="sk-tag">Python (Expert)</span><span class="sk-tag">Pydantic</span><span class="sk-tag">Asyncio</span><span class="sk-tag">TypeScript</span></div>
+    </div>
+    <div class="sk-card">
+      <div class="sk-icon">⚡</div>
+      <div class="sk-lbl">API Design</div>
+      <p class="sk-desc">FastAPI-first REST APIs with auto-generated OpenAPI docs, dependency injection, and error handling.</p>
+      <div class="sk-tags"><span class="sk-tag">FastAPI</span><span class="sk-tag">REST</span><span class="sk-tag">Next.js 14</span><span class="sk-tag">OpenAPI</span></div>
+    </div>
+    <div class="sk-card">
+      <div class="sk-icon">🧠</div>
+      <div class="sk-lbl">AI / Agentic Systems</div>
+      <p class="sk-desc">Multi-agent orchestration, RAG pipelines with semantic re-ranking, and production LLM integration.</p>
+      <div class="sk-tags"><span class="sk-tag">LangGraph</span><span class="sk-tag">RAG</span><span class="sk-tag">Google Gemini</span><span class="sk-tag">Cerebras Llama</span><span class="sk-tag">NLP</span></div>
+    </div>
+    <div class="sk-card">
+      <div class="sk-icon">🗄️</div>
+      <div class="sk-lbl">Databases & Storage</div>
+      <p class="sk-desc">Relational and vector databases; schema design, query optimisation, and embedding storage.</p>
+      <div class="sk-tags"><span class="sk-tag">PostgreSQL</span><span class="sk-tag">MySQL</span><span class="sk-tag">SQLite</span><span class="sk-tag">Pinecone Vector DB</span></div>
+    </div>
+    <div class="sk-card">
+      <div class="sk-icon">🐳</div>
+      <div class="sk-lbl">Deployment & Cloud</div>
+      <p class="sk-desc">Multi-stage Docker builds, cloud deployments on Vercel and Hugging Face Spaces infrastructure.</p>
+      <div class="sk-tags"><span class="sk-tag">Docker</span><span class="sk-tag">Vercel</span><span class="sk-tag">HF Spaces</span><span class="sk-tag">Git / GitHub</span></div>
+    </div>
+    <div class="sk-card">
+      <div class="sk-icon">⚙️</div>
+      <div class="sk-lbl">System Design</div>
+      <p class="sk-desc">Map-Reduce patterns, parallel agent execution, crash recovery, and token-economics design.</p>
+      <div class="sk-tags"><span class="sk-tag">Map-Reduce</span><span class="sk-tag">Parallel Processing</span><span class="sk-tag">Crash Recovery</span><span class="sk-tag">Token Economics</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- PROJECTS -->
+<section class="sect" id="projects">
+  <p class="s-lbl reveal">Shipped Projects</p>
+  <h2 class="s-title reveal">What I've <em>built</em><br>& deployed</h2>
+
+  <div class="proj-grid">
+
+    <!-- ── PROJECT 1 : AGENTIC AX ORCHESTRATOR ── -->
+    <div class="pc reveal">
+      <div class="pc-top">
+        <div>
+          <h3 class="pc-title">Agentic AX Orchestrator</h3>
+          <p class="pc-stack">LangGraph · FastAPI · Pinecone · Docker</p>
+        </div>
+        <span class="pc-badge">Live · Deployed</span>
+      </div>
+      <div class="pc-body">
+        <p class="pc-desc">
+          Enterprise-grade agentic backend platform — built end-to-end, from problem definition
+          to a live containerised deployment. Processes 900+ data points across 100 parallel agents
+          with zero context failures.
+        </p>
+        <ul class="pc-list">
+          <li>Multi-agent orchestration via <strong>LangGraph state machines</strong> with deterministic workflow control</li>
+          <li><strong>RAG pipeline</strong> — Pinecone vector DB + CrossEncoder re-ranking for high-accuracy semantic retrieval</li>
+          <li>NLP-driven persona simulation + <strong>Map-Reduce synthesis</strong> across 100 parallel agents</li>
+          <li><strong>Crash recovery</strong>, token-economics safeguards, and full session persistence</li>
+          <li>Packaged via <strong>Docker multi-stage build</strong> → deployed to Hugging Face cloud infrastructure</li>
+        </ul>
+        <div class="arch">
+          <div class="arch-lbl">System Architecture</div>
+          <div class="arch-flow">
+            <span class="arch-node">Client Request</span><span class="arch-arr">→</span>
+            <span class="arch-node">FastAPI</span><span class="arch-arr">→</span>
+            <span class="arch-node">LangGraph Agent</span><span class="arch-arr">→</span>
+            <span class="arch-node">Pinecone RAG</span><span class="arch-arr">→</span>
+            <span class="arch-node">Map-Reduce</span><span class="arch-arr">→</span>
+            <span class="arch-node">Synthesised Output</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-foot">
+        <a href="https://huggingface.co/spaces/SumitOza/Agentic-AX-Orchestrator" target="_blank" class="btn btn-p">🤗 &nbsp;Live Demo</a>
+        <a href="https://github.com/SumitOza" target="_blank" class="btn btn-g">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+
+    <!-- ── PROJECT 2 : VOICE ASSISTANT ── -->
+    <div class="pc reveal">
+      <div class="pc-top">
+        <div>
+          <h3 class="pc-title">AI Voice Assistant</h3>
+          <p class="pc-stack">Python · SpeechRecognition · pyttsx3 · NewsAPI</p>
+        </div>
+        <span class="pc-badge">Python · 100%</span>
+      </div>
+      <div class="pc-body">
+        <p class="pc-desc">
+          A fully Python-powered voice assistant backend that listens, parses intent, and
+          triggers real system actions — opening web pages, playing MP3 files from a
+          custom music library, and fetching live news headlines.
+        </p>
+        <ul class="pc-list">
+          <li><strong>Voice-to-intent pipeline</strong> — microphone input → speech recognition → command dispatch</li>
+          <li>Modular <strong>musicLib.py</strong> acts as a lightweight backend data-store for track routing</li>
+          <li><strong>Web-browser automation</strong> via Python's webbrowser module for URL-mapped voice commands</li>
+          <li><strong>NewsAPI integration</strong> — fetches and reads out live headlines on demand</li>
+          <li>Clean <strong>main.py</strong> entry-point with event-loop architecture — extensible and well-structured</li>
+          <li>Demonstrates core backend skills: <strong>I/O handling, module separation, API consumption</strong></li>
+        </ul>
+        <div class="arch">
+          <div class="arch-lbl">Request Flow</div>
+          <div class="arch-flow">
+            <span class="arch-node">Mic Input</span><span class="arch-arr">→</span>
+            <span class="arch-node">Speech Recogniser</span><span class="arch-arr">→</span>
+            <span class="arch-node">Intent Parser</span><span class="arch-arr">→</span>
+            <span class="arch-node">Command Router</span><span class="arch-arr">→</span>
+            <span class="arch-node">Web / Music / News</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-foot">
+        <a href="https://github.com/SumitOza/Mega_project_1-Ai-Assist-" target="_blank" class="btn btn-p">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          View Repo
+        </a>
+        <a href="https://github.com/SumitOza/Mega_project_1-Ai-Assist-/releases/tag/python" target="_blank" class="btn btn-g">📦 &nbsp;Release</a>
+      </div>
+    </div>
+
+    <!-- ── PROJECT 3 : FORWARD DEPLOY (FULL WIDTH) ── -->
+    <div class="pc pc-full reveal">
+      <div class="pc-top">
+        <div>
+          <h3 class="pc-title">Forward Deployed Engineer Quest</h3>
+          <p class="pc-stack">Autonomous AI Agent · Deterministic Validation · Token Economics</p>
+        </div>
+        <span class="pc-badge">Competitive Eval</span>
+      </div>
+      <div class="pc-body" style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+        <div>
+          <p class="pc-desc">
+            Selected for a competitive 3-day technical evaluation at an AI-native firm.
+            Designed and shipped an autonomous AI research agent under real deadline pressure
+            with live stakeholder demos and Q&A with technical leads.
+          </p>
+          <ul class="pc-list">
+            <li>Autonomous research agent with <strong>deterministic validation workflows</strong></li>
+            <li><strong>Token-economics safeguards</strong> to prevent runaway LLM cost</li>
+            <li>Presented architecture decisions directly to technical leads and HR stakeholders</li>
+            <li>Passed HR interview — received direct <strong>Project Lead endorsement</strong></li>
+          </ul>
+        </div>
+        <div class="arch" style="align-self:center;">
+          <div class="arch-lbl">Evaluation Outcome</div>
+          <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.4rem;">
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;padding:.45rem 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--dim);">Timeline</span><span style="color:var(--green);">3 days</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;padding:.45rem 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--dim);">HR Interview</span><span style="color:var(--green);">Passed ✓</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;padding:.45rem 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--dim);">Project Lead</span><span style="color:var(--green);">Endorsed ✓</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;padding:.45rem 0;">
+              <span style="color:var(--dim);">Stakeholder Demo</span><span style="color:var(--green);">Delivered ✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- WHY ME -->
+<section class="sect" id="why">
+  <p class="s-lbl reveal">Why Hire Me</p>
+  <h2 class="s-title reveal">What makes me <em>different</em><br>as a fresher</h2>
+  <div class="reveal">
+    <div class="why-card">
+      <div class="why-num">01</div>
+      <div>
+        <div class="why-h">I ship production systems, not toy demos</div>
+        <div class="why-sub">End-to-end ownership · Docker · Cloud Deployment</div>
+        <p class="why-body">Both projects go from requirement to live URL. The Agentic AX Orchestrator handles 900+ data points across 100 parallel agents — packaged in Docker and running on cloud infrastructure. Not a Jupyter notebook. A real system.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">02</div>
+      <div>
+        <div class="why-h">I make deliberate architectural decisions</div>
+        <div class="why-sub">Model selection · Token economics · Latency SLAs</div>
+        <p class="why-body">I document rationale — why LangGraph over raw LLM chaining, why modular musicLib.py over a monolith, why cross-encoder re-ranking over basic cosine similarity. Architecture is a deliberate choice, not an accident.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">03</div>
+      <div>
+        <div class="why-h">I perform under pressure with stakeholders</div>
+        <div class="why-sub">3-day evaluation · Technical demos · Real feedback loops</div>
+        <p class="why-body">Designed and delivered an autonomous AI agent in a competitive 3-day engineering assessment — presenting architecture to technical leads, fielding feedback, and adapting in real time. Passed. Endorsed by Project Lead.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">04</div>
+      <div>
+        <div class="why-h">US timezone flexible — immediately available</div>
+        <div class="why-sub">Gandhinagar, Gujarat · Remote-first · Async-proficient</div>
+        <p class="why-body">Comfortable aligning to global client schedules. BCA final year at Amity University, graduating July 2026 with AI & ML specialisation. Ready to contribute from day one — no ramp-up needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- SKILLS TABLE -->
+<section class="sect" id="skills">
+  <p class="s-lbl reveal">Skill Matrix</p>
+  <h2 class="s-title reveal">Complete <em>technical</em><br>breakdown</h2>
+  <table class="sk-table reveal">
+    <tr><td class="cat">Custom AI Dev</td><td class="vals">LangGraph (Agentic State Machines) · Multi-Agent Orchestration · RAG Pipelines · NLP · Chatbot Architecture</td></tr>
+    <tr><td class="cat">ML & Automation</td><td class="vals">Google Gemini · Cerebras Llama-3.1-70B · Pydantic · Map-Reduce · Automated Workflow Design</td></tr>
+    <tr><td class="cat">Backend APIs</td><td class="vals">FastAPI · REST APIs · Next.js 14 API Routes · SpeechRecognition · pyttsx3</td></tr>
+    <tr><td class="cat">Cloud & Infra</td><td class="vals">Docker (multi-stage builds) · Vercel · Hugging Face Spaces · Git / GitHub</td></tr>
+    <tr><td class="cat">Databases</td><td class="vals">PostgreSQL · MySQL · SQLite · Pinecone Vector DB</td></tr>
+    <tr><td class="cat">Languages</td><td class="vals">Python (Expert) · JavaScript / TypeScript</td></tr>
+    <tr><td class="cat">Client-Facing</td><td class="vals">Requirement gathering · Technical storytelling · Stakeholder demos · Translating business needs into AI solutions</td></tr>
+    <tr><td class="cat">Delivery</td><td class="vals">End-to-end project ownership · Agile delivery under deadlines · Cross-functional collaboration · Documentation</td></tr>
+  </table>
+</section>
+
+<hr class="div"/>
+
+<!-- CONTACT -->
+<section class="sect" id="contact">
+  <p class="s-lbl reveal">Get In Touch</p>
+  <h2 class="s-title reveal">Let's build<br>something <em>real</em></h2>
+  <div class="c-grid reveal">
+    <a href="mailto:sumitoza.01@gmail.com" class="c-card">
+      <div class="c-ico">✉️</div>
+      <div><div class="c-lbl">Email</div><div class="c-val">sumitoza.01@gmail.com</div></div>
+    </a>
+    <a href="tel:+917622046136" class="c-card">
+      <div class="c-ico">📱</div>
+      <div><div class="c-lbl">Phone</div><div class="c-val">+91-7622046136</div></div>
+    </a>
+    <a href="https://github.com/SumitOza" target="_blank" class="c-card">
+      <div class="c-ico">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+      </div>
+      <div><div class="c-lbl">GitHub</div><div class="c-val">github.com/SumitOza</div></div>
+    </a>
+    <a href="https://huggingface.co/SumitOza" target="_blank" class="c-card">
+      <div class="c-ico">🤗</div>
+      <div><div class="c-lbl">HuggingFace</div><div class="c-val">huggingface.co/SumitOza</div></div>
+    </a>
+    <a href="https://www.linkedin.com/in/sumit-oza-7956a92b5" target="_blank" class="c-card">
+      <div class="c-ico" style="background:rgba(56,189,248,.1);font-size:.75rem;font-weight:700;color:var(--blue);">in</div>
+      <div><div class="c-lbl">LinkedIn</div><div class="c-val">sumit-oza-7956a92b5</div></div>
+    </a>
+    <div class="c-card" style="cursor:default;">
+      <div class="c-ico">📍</div>
+      <div><div class="c-lbl">Location · Timezone</div><div class="c-val">Gandhinagar, Gujarat · US TZ Flex</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>// Sumit Oza · Backend Developer · BCA (AI & ML) — Amity University, Gwalior · Graduating July 2026</span>
+  <span style="color:var(--accent);">available_for_hire = True</span>
+</footer>
+
+<script>
+// ── Cursor ──
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function loop(){
+  cur.style.transform=`translate(${mx-4}px,${my-4}px)`;
+  rx+=(mx-rx)*.1; ry+=(my-ry)*.1;
+  curR.style.transform=`translate(${rx-16}px,${ry-16}px)`;
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a,.sk-card,.why-card,.pc,.c-card,.arch-node').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform+=' scale(2.2)';curR.style.opacity='0.75';});
+  el.addEventListener('mouseleave',()=>{curR.style.opacity='0.35';});
+});
+
+// ── Scroll reveal ──
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      e.target.style.transitionDelay=(i%5)*.07+'s';
+      e.target.classList.add('vis');
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.07});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+// ── Active nav ──
+const sects=document.querySelectorAll('section[id]');
+const links=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let c='';
+  sects.forEach(s=>{if(window.scrollY>=s.offsetTop-230) c=s.id;});
+  links.forEach(a=>{
+    a.classList.toggle('active',a.getAttribute('href')==='#'+c);
+  });
+});
+</script>
+</body>
+</html>
